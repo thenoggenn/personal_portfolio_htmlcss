@@ -1,0 +1,54 @@
+import random
+import time
+
+GRID_HEIGHT = 8
+GRID_WIDTH = 40
+STARTING_CELLS = 75
+
+def print_grid(grid):
+    """Prints grid in viewable format"""
+    for row in grid:
+        print(''.join(row))
+
+def initialize_grid(height, width, cell_count):
+    """Creates starting grid with random live cells"""
+    grid = [[" "] * width for _ in range(height)]
+    for _ in range(cell_count):
+        x, y = random.randint(0, width - 1), random.randint(0, height - 1)
+        grid[y][x] = "0"
+    return grid
+
+def count_neighbors(grid, x, y):
+    """Returns count of live neighbors of given cell"""
+    count = 0
+    for dy in [-1, 0, 1]:
+        for dx in [-1, 0, 1]:
+            if dy == 0 and dx == 0:
+                continue
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < GRID_WIDTH and 0 <= ny < GRID_HEIGHT and grid[ny][nx] == '0':
+                count += 1
+    return count
+
+def update_grid(grid):
+    """Updates grid according to Game of Life rules"""
+    new_grid = [[' '] * GRID_WIDTH for _ in range(GRID_HEIGHT)]
+    for y in range(GRID_HEIGHT):
+        for x in range(GRID_WIDTH):
+            neighbors = count_neighbors(grid, x, y)
+            if grid[y][x] == "0":
+                if neighbors < 2 or neighbors > 3:
+                    new_grid[y][x] = " "
+                else:
+                    new_grid[y][x] = "0"
+            else:
+                if neighbors == 3:
+                    new_grid[y][x] = "0"
+    return new_grid
+
+# Main simulation loop
+grid = initialize_grid(GRID_HEIGHT, GRID_WIDTH, STARTING_CELLS)
+while True:
+    print_grid(grid)
+    grid = update_grid(grid)
+    time.sleep(2)
